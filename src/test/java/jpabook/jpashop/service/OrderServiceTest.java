@@ -76,4 +76,32 @@ public class OrderServiceTest {
         //then
         fail("재고 수량 부족 예외가 발생해야 한다."); // 예외가 발생하면 테스트는 통과이다.
     }
+
+    @Test()
+    public void 주문취소() {
+        //given
+        Member member = Member.createMember("회원1", new Address("서울","상도로", "123-123"));
+        em.persist(member);
+
+        Book book = new Book();
+        book.setName("시골 JPA");
+        book.setPrice(10000);
+        book.setStockQuantity(10);
+        em.persist(book);
+
+        // 주문할 수량
+        int orderCount = 2;
+
+        Long orderId = orderService.order(member.getId(), book.getId(), orderCount);
+
+        // when
+        orderService.cancelOrder(orderId);
+
+        // then
+        Order getOrder = orderRepository.findOne(orderId);
+
+
+        assertEquals("주문이 취소되면 해당 주문의 상태는 CANCEL 이다", OrderStatus.CANCEL, getOrder.getStatus());
+        assertEquals("주문이 취소되면 그만큼 재고가 증가해야한다.", 10, book.getStockQuantity());
+    }
 }

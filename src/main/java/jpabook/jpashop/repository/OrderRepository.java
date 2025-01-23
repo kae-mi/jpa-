@@ -27,19 +27,23 @@ public class OrderRepository {
         return em.find(Order.class, id);
     }
 
+    // JPA를 통해 동적 쿼리를 작성하는 것은 복잡하다. Querydsl이 대안으로 등작했다.
     public List<Order> findAllByCriteria(OrderSearch orderSearch) {
+
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Order> cq = cb.createQuery(Order.class);
         Root<Order> o = cq.from(Order.class);
         Join<Order, Member> m = o.join("member", JoinType.INNER); //회원과 조인
         List<Predicate> criteria = new ArrayList<>();
-//주문 상태 검색
+
+        //주문 상태 검색
         if (orderSearch.getOrderStatus() != null) {
             Predicate status = cb.equal(o.get("status"),
                     orderSearch.getOrderStatus());
             criteria.add(status);
         }
-//회원 이름 검색
+
+        //회원 이름 검색
         if (StringUtils.hasText(orderSearch.getMemberName())) {
             Predicate name =
                     cb.like(m.<String>get("name"), "%" + orderSearch.getMemberName()
@@ -50,5 +54,4 @@ public class OrderRepository {
         TypedQuery<Order> query = em.createQuery(cq).setMaxResults(1000); //최대 1000건
         return query.getResultList();
     }
-
 }
