@@ -49,7 +49,7 @@ public class Order {
         delivery.setOrder(this);
     }
 
-    //==order를 생성하는 메서드==// static으로 만든 이유는 바로 호출할 수 있기 때문??
+    //==order를 생성하는 메서드, 생성하면서 여러 연관관계를 셋팅함==// static 으로 만든 이유는 바로 호출할 수 있기 때문??
     public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(member);

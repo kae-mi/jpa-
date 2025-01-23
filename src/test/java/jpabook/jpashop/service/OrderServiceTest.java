@@ -29,10 +29,9 @@ public class OrderServiceTest {
 
     @Test
     public void 상품주문() throws Exception {
+
         //given
-        Member member = new Member();
-        member.setName("회원1");
-        member.setAddress(new Address("서울", "상도로", "123-123"));
+        Member member = Member.createMember("회원1", new Address("서울","상도로", "123-123"));
         em.persist(member);
 
         Book book = new Book();
@@ -43,10 +42,10 @@ public class OrderServiceTest {
 
         int orderCount = 2;
 
-        //when
+        //when 주문 만들기
         Long orderId = orderService.order(member.getId(), book.getId(), orderCount);
 
-        //then
+        //then 주문 찾기
         Order getOrder = orderRepository.findOne(orderId);
 
         assertEquals("상품 주문시 상태는 ORDER", OrderStatus.ORDER, getOrder.getStatus());
@@ -58,9 +57,9 @@ public class OrderServiceTest {
     @Test(expected = NotEnoughStockException.class)
     public void 상품주문_재고수량초과() throws Exception {
         //given
-        Member member = new Member();
-        member.setName("회원1");
-        member.setAddress(new Address("서울", "상도로", "123-123"));
+
+        Member member = Member.createMember("회원1", new Address("서울","상도로", "123-123"));
+
         em.persist(member);
 
         Book book = new Book();
@@ -75,8 +74,6 @@ public class OrderServiceTest {
         orderService.order(member.getId(), book.getId(), orderCount);
 
         //then
-        fail("재고 수량 부족 예외가 발생해야 한다.");
+        fail("재고 수량 부족 예외가 발생해야 한다."); // 예외가 발생하면 테스트는 통과이다.
     }
-
-
 }

@@ -10,6 +10,7 @@ import jpabook.jpashop.repository.MemberRepository;
 import jpabook.jpashop.repository.OrderRepository;
 import jpabook.jpashop.repository.OrderSearch;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +18,24 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 public class OrderService {
 
+    @Autowired
     private final OrderRepository orderRepository;
-    private final MemberRepository memberRepositoty;
+
+    @Autowired
+    private final MemberRepository memberRepository;
+
+    @Autowired
     private final ItemRepository itemRepository;
+
+    public OrderService(OrderRepository orderRepository,
+                        MemberRepository memberRepository,
+                        ItemRepository itemRepository){
+        this.orderRepository = orderRepository;
+        this.memberRepository = memberRepository;
+        this.itemRepository = itemRepository;
+    }
 
     /**
      * 주문
@@ -31,7 +44,7 @@ public class OrderService {
     public Long order(Long memberId, Long itemId, int count) {
 
         //엔티티 조회
-        Member member = memberRepositoty.findOne(memberId);
+        Member member = memberRepository.findOne(memberId);
         Item item = itemRepository.findOne(itemId);
 
         //배송정보 생성
